@@ -7,33 +7,32 @@ class LinkedPair:
         self.value = value
         self.next = None
 
+
 class HashTable:
-    '''
+    """
     A hash table that with `capacity` buckets
     that accepts string keys
-    '''
+    """
+
     def __init__(self, capacity):
         self.capacity = capacity  # Number of buckets in the hash table
         self.storage = [None] * capacity
 
-
     def _hash(self, key):
-        '''
+        """
         Hash an arbitrary key and return an integer.
 
         You may replace the Python hash with DJB2 as a stretch goal.
-        '''
+        """
         return hash(key)
 
-
     def _hash_djb2(self, key):
-        '''
+        """
         Hash an arbitrary key using DJB2 hash
 
         OPTIONAL STRETCH: Research and implement DJB2
-        '''
+        """
         pass
-
 
     def _hash_mod(self, key):
         '''
@@ -42,9 +41,8 @@ class HashTable:
         '''
         return self._hash(key) % self.capacity
 
-
     def insert(self, key, value):
-        '''
+        """
         Store the value with the given key.
 
         # Part 1: Hash collisions should be handled with an error warning. (Think about and
@@ -53,42 +51,88 @@ class HashTable:
         # Part 2: Change this so that hash collisions are handled with Linked List Chaining.
 
         Fill this in.
-        '''
-        pass
-
-
+        """
+        # take the key and value, and put it somewhere in the array
+        # get an index for the key
+        # index = self._hash_mod(key)
+        # if self.storage[index] is not None:
+        #     print('WARN: Collision detected for key' + key)
+        #
+        # self.storage[index] = LinkedPair(key, value)
+        position = self._hash_mod(key)
+        head = self.storage[position]
+        new_head = LinkedPair(key, value)
+        new_head.next = head
+        self.storage[position] = new_head
 
     def remove(self, key):
-        '''
+        """
         Remove the value stored with the given key.
 
         Print a warning if the key is not found.
 
         Fill this in.
-        '''
-        pass
+        """
+        # index = self._hash_mod(key)
+        # self.storage[index] = None
+        position = self._hash_mod(key)
+        placeholder = LinkedPair("placeholder", "placeholder")
+        head = placeholder
+        placeholder.next = self.storage[position]
 
+        while head.next is not None:
+            if head.next.key == key:
+                head.next = head.next.next
+                break
+            head = head.next
+        self.storage[position] = placeholder.next
 
     def retrieve(self, key):
-        '''
+        """
         Retrieve the value stored with the given key.
 
         Returns None if the key is not found.
 
         Fill this in.
-        '''
-        pass
-
+        """
+        # index = self._hash_mod(key)
+        # if self.storage[index] is None:
+        #     return None
+        # return self.storage[index].value
+        position = self._hash_mod(key)
+        head = self.storage[position]
+        while head is not None:
+            if head.key == key:
+                return head.value
+            head = head.next
 
     def resize(self):
-        '''
+        """
         Doubles the capacity of the hash table and
         rehash all key/value pairs.
 
         Fill this in.
-        '''
-        pass
-
+        """
+        # old_storage = self.storage
+        # self.capacity *= 2
+        #
+        # # create a new array size * 2
+        # self.storage = [None] * self.capacity
+        #
+        # # move all values over
+        # for pair in old_storage:
+        #     if pair is not None:
+        #         # figure out the correct new place for the key/value
+        #         self.insert(pair.key, pair.value)
+        previous_storage = self.storage
+        previous_capacity = self.capacity
+        self.capacity = previous_capacity * 2
+        self.storage = [None] * self.capacity
+        for i in range(previous_capacity):
+            head = previous_storage[i]
+            while head is not None:
+                self.insert(head.key, head.value)
+                head = head.next
 
 
 if __name__ == "__main__":
